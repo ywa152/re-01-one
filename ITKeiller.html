@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 国内 CDN 加速 -->
+    <script src="https://cdn.staticfile.org/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.staticfile.org/font-awesome/6.7.2/css/all.min.css">
+    <script src="https://cdn.staticfile.org/echarts/5.4.2/echarts.min.js"></script>
+    <title>科院 - BMS 实验室鼠标宏定义界面</title>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+            display: flex;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+       .sidebar {
+            width: 300px;
+            background-color: #374151;
+            color: #fff;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            transition: width 0.3s ease;
+            overflow: hidden;
+        }
+
+       .sidebar.collapsed {
+            width: 0;
+            padding: 0;
+        }
+
+       .sidebar.collapsed .input-group {
+            display: none;
+        }
+
+       .sidebar h2 {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+       .sidebar .input-group {
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+       .sidebar .input-group:hover {
+            transform: scale(1.05);
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+       .sidebar .input-group label {
+            display: block;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+       .sidebar .input-group input,
+       .sidebar .input-group select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            position: relative;
+            color: #000;
+        }
+
+       .sidebar .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+
+       .main-content {
+            flex: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            display: flex;
+        }
+
+       .container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            width: 100%;
+            max-width: 800px;
+            transition: all 0.3s ease;
+        }
+
+       .container:hover {
+            transform: scale(1.02);
+            box-shadow: 0 8px 12px -1px rgba(0, 0, 0, 0.15), 0 4px 8px -1px rgba(0, 0, 0, 0.1);
+        }
+
+       .title {
+            font-size: 1.875rem;
+            line-height: 2.25rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+       .input-group {
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+
+       .input-group:hover {
+            transform: scale(1.05);
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+       .input-group label {
+            display: block;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+       .input-group input,
+       .input-group select {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            position: relative;
+        }
+
+       .input-group input:focus {
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5);
+        }
+
+       .button-group {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+        }
+
+       .button-group button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+       .button-group button.start {
+            background-color: #22c55e;
+            color: #fff;
+        }
+
+       .button-group button.start:hover {
+            background-color: #16a34a;
+        }
+
+       .button-group button.stop {
+            background-color: #ef4444;
+            color: #fff;
+        }
+
+       .button-group button.stop:hover {
+            background-color: #dc2626;
+        }
+
+       .button-group button.save {
+            background-color: #3b82f6;
+            color: #fff;
+        }
+
+       .button-group button.save:hover {
+            background-color: #2563eb;
+        }
+
+       .button-group button.clear {
+            background-color: #6b7280;
+            color: #fff;
+        }
+
+       .button-group button.clear:hover {
+            background-color: #4b5563;
+        }
+
+       .button-group button.export {
+            background-color: #f59e0b;
+            color: #fff;
+        }
+
+       .button-group button.export:hover {
+            background-color: #d97706;
+        }
+
+       .button-group button.import {
+            background-color: #10b981;
+            color: #fff;
+        }
+
+       .button-group button.import:hover {
+            background-color: #059669;
+        }
+
+       .recorded-steps {
+            margin-top: 1.5rem;
+            max-height: 200px;
+            overflow-y: auto;
+            transition: all 0.3s ease;
+        }
+
+       .recorded-steps:hover {
+            transform: scale(1.05);
+            background-color: rgba(0, 0, 0, 0.03);
+        }
+
+       .recorded-steps h2 {
+            font-size: 1.25rem;
+            line-height: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+       .recorded-steps ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+       .recorded-steps li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+       .toggle-sidebar {
+            position: absolute;
+            top: 1rem;
+            left: 15rem;
+            background-color: #1f2937;
+            color: #fff;
+            border: none;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            width: 35px;
+            height: 35px;
+            display: none;
+        }
+
+       .toggle-sidebar .bar {
+            width: 100%;
+            height: 3px;
+            background-color: #fff;
+        }
+
+       .toggle-sidebar:hover {
+            transform: scale(1.1);
+        }
+
+       .input-group input::after {
+            content: '|';
+            position: absolute;
+            right: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: blink 1s infinite;
+            opacity: 0;
+        }
+
+       .input-group input:focus::after {
+            opacity: 1;
+        }
+
+        @keyframes blink {
+            0%, 100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0;
+            }
+        }
+
+       .chart-select {
+            margin-top: 1.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+       .chart-select button {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin: 0 0.5rem;
+        }
+
+       .chart-select button.active {
+            background-color: #3b82f6;
+            color: #fff;
+        }
+
+       .chart-container {
+            width: 100%;
+            height: 600px;
+            margin-top: 1.5rem;
+        }
+
+       .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+       .modal-content {
+            background-color: #fff;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+       .connect-device-page {
+            display: flex;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #f9fafb;
+            justify-content: center;
+            align-items: center;
+        }
+
+       .device-connect-button {
+            background-color: #a5f3fc;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            line-height: 1.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+       .device-connect-button:hover {
+            background-color: #67e8f9;
+        }
+
+        @media (max - width: 768px) {
+           .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                height: 100vh;
+                z-index: 9;
+            }
+
+           .main-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <button class="toggle-sidebar" id="toggle-sidebar">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
+    </button>
+    <div class="sidebar" id="sidebar">
+        <h2>绑定键盘按键</h2>
+        <div class="input-group">
+            <label for="key-binding">选择按键</label>
+            <select id="key-binding">
+                <option value="A">A</option>
+                <option value="B">B</option>
+                <option value="C">C</option>
+                <!-- 可根据需要添加更多按键 -->
+            </select>
+        </div>
+        <h2>按键时序操作链</h2>
+        <div class="input-group">
+            <label for="key-sequence">输入按键序列</label>
+            <input type="text" id="key-sequence" placeholder="例如: A,B,C">
+        </div>
+        <h2>更改鼠标灵敏度</h2>
+        <div class="input-group">
+            <label for="mouse-sensitivity">灵敏度</label>
+            <input type="number" id="mouse-sensitivity" min="1" max="10" value="5">
+        </div>
+    </div>
+    <div class="main-content" id="main-content">
+        <div class="container">
+            <h1 class="title">科院 - BMS 实验室鼠标宏定义界面</h1>
+            <div class="input-group">
+                <label for="macro-name">宏名称</label>
+                <input type="text" id="macro-name" placeholder="输入宏名称">
+            </div>
+            <div class="input-group">
+                <label for="bind-key">绑定按键</label>
+                <select id="bind-key">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <!-- 可根据需要添加更多按键 -->
+                </select>
+            </div>
+            <div class="button-group">
+                <button class="start" id="start-record">开始记录</button>
+                <button class="stop" id="stop-record" disabled>停止记录</button>
+                <button class="save" id="save-macro" disabled>保存宏</button>
+                <button class="clear" id="clear-record">清除记录</button>
+                <button class="export" id="export-macro">导出宏</button>
+                <button class="import" id="import-macro">导入宏</button>
+            </div>
+            <div class="recorded-steps">
+                <h2>记录的步骤</h2>
+                <ul id="step-list"></ul>
+            </div>
+            <div class="chart-select">
+                <button id="line-chart-btn" class="active">折线图</button>
+                <button id="bar-chart-btn">条形图</button>
+            </div>
+            <div class="chart-container" id="chart"></div>
+        </div>
+    </div>
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <p id="modal-message"></p>
+        </div>
+    </div>
+    <div class="connect-device-page" id="connect-device-page">
+        <button class="device-connect-button" id="device-connect-button">连接设备</button>
+    </div>
+    <!-- 引入外部 JavaScript 文件 -->
+    <script src="script.js"></script>
+</body>
+
+</html>    
